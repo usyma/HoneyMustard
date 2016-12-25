@@ -48,6 +48,8 @@ void run_server(char * port){
   }
 
   while(!stop){
+    // TODO: Create data structure to keep track of multiple clients
+
     printf("Waiting for connection...\n");
     int client_fd = accept(sock_fd, NULL, NULL);
     printf("Connection made: client_fd=%d\n", client_fd);
