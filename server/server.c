@@ -10,6 +10,9 @@
 /* Global Variables */
 int stop;
 int serverSocket; // server file descriptor
+int num_clients; // tracks number of clients
+int clients[64]; // client file descriptors, arbitrarily holds 64
+pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
 
 /**
 ** Closes the server when called by signal handler
@@ -19,6 +22,20 @@ void stop_server(){
   shutdown(serverSocket, SHUT_RDWR);
   close(serverSocket);
   exit(1);
+}
+
+/**
+** TODO: Read data from client and update main buffer
+**/
+void read_from_client(void * args){
+
+}
+
+/**
+** TODO: Send data to all clients
+**/
+void send_to_clients(void * args){
+
 }
 
 void run_server(char * port){
@@ -48,19 +65,15 @@ void run_server(char * port){
   }
 
   while(!stop){
-    // TODO: Create data structure to keep track of multiple clients
-
     printf("Waiting for connection...\n");
-    int client_fd = accept(sock_fd, NULL, NULL);
-    printf("Connection made: client_fd=%d\n", client_fd);
+    clients[num_client] = accept(sock_fd, NULL, NULL);
+    printf("Connection made: client_id: %d, client_fd=%d\n", num_client, clients[num_client]);
 
-    char buffer[1000];
-    int len = read(client_fd, buffer, sizeof(buffer) - 1);
-    buffer[len] = '\0';
+    pthread_mutex_lock(&mtx);
+    num_clients++;
+    pthread_mutex_unlock(&mtx);
 
-    printf("Read %d chars\n", len);
-    printf("===\n");
-    printf("%s\n", buffer);
+    // TODO: Create threads that will read from clients and send to clients
   }
 
 }
