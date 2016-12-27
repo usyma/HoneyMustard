@@ -6,6 +6,8 @@
 #include <netdb.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include <pthread.h>
+
 
 /* Global Variables */
 int stop;
@@ -13,6 +15,7 @@ int serverSocket; // server file descriptor
 int num_clients; // tracks number of clients
 int clients[64]; // client file descriptors, arbitrarily holds 64
 pthread_mutex_t mtx = PTHREAD_MUTEX_INITIALIZER;
+// TODO: Create main buffer
 
 /**
 ** Closes the server when called by signal handler
@@ -26,9 +29,10 @@ void stop_server(){
 
 /**
 ** TODO: Read data from client and update main buffer
+** Takes in client fd as parameter
 **/
 void read_from_client(void * args){
-
+  int fd = *(int*)args;
 }
 
 /**
@@ -73,7 +77,9 @@ void run_server(char * port){
     num_clients++;
     pthread_mutex_unlock(&mtx);
 
-    // TODO: Create threads that will read from clients and send to clients
+    pthread_t read_thread, write_thread;
+    pthread_create(&read_thread, NULL, read_from_client, (void*)(&clients[num_clients-1]));
+    pthread_create(&write_thread, NULL, send_to_clients, (void*)NULL);
   }
 
 }
